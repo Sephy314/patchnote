@@ -1,0 +1,118 @@
+package cmd
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+
+	"github.com/patchnote/patchnote/internal/ai"
+	"github.com/patchnote/patchnote/internal/config"
+	"github.com/patchnote/patchnote/internal/git"
+	"github.com/patchnote/patchnote/internal/output"
+	"github.com/patchnote/patchnote/internal/prompts"
+	"github.com/patchnote/patchnote/internal/ui"
+)
+
+var commitCmd = &cobra.Command{
+	Use:   "commit",
+	Short: "Generate and create a commit",
+	Long: `Analyse staged changes, generate a commit message,
+preview it, and optionally commit.`,
+	RunE: runCommit,
+}
+
+func runCommit(cmd *cobra.Command, _ []string) error {
+	if !git.IsInstalled() {
+		return fmt.Errorf("git is not installed. Please install git first: https://git-scm.com")
+	}
+
+	dir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("cannot determine current directory: %w", err)
+	}
+
+	if !git.IsRepo(dir) {
+		return fmt.Errorf("not inside a git repository. Navigate to a repo or run 'git init' first")
+	}
+
+	cfg, err := config.Load()
+	if err != nil {
+		return fmt.Errorf("configuration error: %w", err)
+	}
+
+	if cfg.APIKey == "" {
+		return fmt.Errorf("no API key configured. Run 'patchnote register' to set it up")
+	}
+
+	gitClient := git.NewClient(dir)
+
+	if !gitClient.HasAnyChanges() {
+		return fmt.Errorf("no changes detected. Stage or modify files first")
+	}
+
+	input, err := prompts.CollectCommitInput(gitClient, cfg)
+	if err != nil {
+		return fmt.Errorf("failed to collect git data: %w", err)
+	}
+
+	messages := prompts.BuildCommitMessages(input)
+
+	client, err := ai.New(cfg)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println()
+	ui.PrintInfo("Generating commit message...")
+
+	resp, err := client.Complete(cmd.Context(), ai.Request{
+		Messages:    messages,
+		Temperature: cfg.Temperature,
+	})
+	if err != nil {
+		return fmt.Errorf("AI generation failed: %w", err)
+	}
+
+	msg := output.ParseCommitMessage(resp.Content)
+
+	ui.PrintInfo("Generated commit message")
+	fmt.Println(output.FormatCommitMessage(msg))
+	fmt.Print(output.Separator())
+
+	action := ui.PromptAction()
+
+	switch action {
+	case ui.ActionCommit:
+		result, err := gitClient.Commit(msg.FullMessage())
+		if err != nil {
+			return err
+		}
+		ui.PrintSuccess(result)
+	case ui.ActionEdit:
+		edited := ui.PromptString("Enter edited commit message")
+		if edited != "" {
+			msg = output.ParseCommitMessage(edited)
+			result, err := gitClient.Commit(msg.FullMessage())
+			if err != nil {
+				return err
+			}
+			ui.PrintSuccess(result)
+		} else {
+			ui.PrintInfo("Edit cancelled")
+		}
+	case ui.ActionCopy:
+		if err := copyToClipboard(msg.FullMessage()); err != nil {
+			return fmt.Errorf("failed to copy: %w", err)
+		}
+		ui.PrintSuccess("Copied to clipboard")
+	case ui.ActionCancel:
+		ui.PrintInfo("Cancelled")
+	}
+
+	return nil
+}
+
+func init() {
+	rootCmd.AddCommand(commitCmd)
+}
