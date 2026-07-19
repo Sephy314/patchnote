@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/patchnote/patchnote/internal/config"
+	"github.com/Sephy314/patchnote/internal/config"
 )
 
 const (

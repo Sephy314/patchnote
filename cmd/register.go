@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/patchnote/patchnote/internal/ai"
-	"github.com/patchnote/patchnote/internal/config"
-	"github.com/patchnote/patchnote/internal/ui"
+	"github.com/Sephy314/patchnote/internal/ai"
+	"github.com/Sephy314/patchnote/internal/config"
+	"github.com/Sephy314/patchnote/internal/ui"
 )
 
 var registerCmd = &cobra.Command{

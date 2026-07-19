@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/patchnote/patchnote/internal/config"
+	"github.com/Sephy314/patchnote/internal/config"
 )
 
 // Message represents a single message in a chat conversation.

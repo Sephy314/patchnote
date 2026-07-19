@@ -1,6 +1,6 @@
 package main
 
-import "github.com/patchnote/patchnote/cmd"
+import "github.com/Sephy314/patchnote/cmd"
 
 func main() {
 	cmd.Execute()

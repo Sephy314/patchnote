@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/patchnote/patchnote/internal/config"
-	"github.com/patchnote/patchnote/internal/git"
+	"github.com/Sephy314/patchnote/internal/config"
+	"github.com/Sephy314/patchnote/internal/git"
 )
 
 func TestBuildCommitMessages(t *testing.T) {

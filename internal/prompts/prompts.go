@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/patchnote/patchnote/internal/ai"
-	"github.com/patchnote/patchnote/internal/config"
-	"github.com/patchnote/patchnote/internal/git"
+	"github.com/Sephy314/patchnote/internal/ai"
+	"github.com/Sephy314/patchnote/internal/config"
+	"github.com/Sephy314/patchnote/internal/git"
 )
 
 const maxDiffLength = 5000
