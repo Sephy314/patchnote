@@ -1,4 +1,4 @@
-module github.com/patchnote/patchnote
+module github.com/Sephy314/patchnote
 
 go 1.26.5
 
