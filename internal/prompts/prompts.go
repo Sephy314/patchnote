@@ -168,6 +168,7 @@ func CollectPRInput(gitClient *git.Client, cfg *config.Config) (*PRInput, error)
 func BuildCommitMessages(input *CommitInput) []ai.Message {
 	system := `Generate a Conventional Commit message: type(scope): description.
 Use imperative mood. After title, blank line then bullet points for changes.
+IMPORTANT: Output ONLY plain text. Do NOT use any Markdown formatting like **, #, -, *, backticks, or any other Markdown syntax.
 Respond in: ` + input.Language
 
 	user := fmt.Sprintf(`Branch: %s
