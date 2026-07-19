@@ -99,7 +99,7 @@ func (c *GroqClient) Complete(ctx context.Context, req Request) (*Response, erro
 	if err != nil {
 		return nil, fmt.Errorf("AI request failed: %w", err)
 	}
-	defer httpResp.Body.Close()
+	defer func() { _ = httpResp.Body.Close() }()
 
 	respBody, err := io.ReadAll(httpResp.Body)
 	if err != nil {
@@ -147,7 +147,7 @@ func (c *GroqClient) ValidateKey(ctx context.Context, apiKey string) error {
 	if err != nil {
 		return fmt.Errorf("cannot reach Groq API: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusUnauthorized {
 		return fmt.Errorf("invalid API key")

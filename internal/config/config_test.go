@@ -54,8 +54,8 @@ func TestLoadDefault(t *testing.T) {
 func TestSaveAndLoad(t *testing.T) {
 	tmpHome := t.TempDir()
 	origHome := os.Getenv("HOME")
-	os.Setenv("HOME", tmpHome)
-	defer os.Setenv("HOME", origHome)
+	_ = os.Setenv("HOME", tmpHome)
+	defer func() { _ = os.Setenv("HOME", origHome) }()
 
 	original := &Config{
 		Provider:    "groq",
@@ -81,8 +81,8 @@ func TestSaveAndLoad(t *testing.T) {
 func TestSaveCreatesDir(t *testing.T) {
 	tmpHome := t.TempDir()
 	origHome := os.Getenv("HOME")
-	os.Setenv("HOME", tmpHome)
-	defer os.Setenv("HOME", origHome)
+	_ = os.Setenv("HOME", tmpHome)
+	defer func() { _ = os.Setenv("HOME", origHome) }()
 
 	cfg := DefaultConfig()
 	cfg.APIKey = "test"

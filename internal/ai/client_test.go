@@ -70,7 +70,7 @@ func TestGroqClientComplete(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer server.Close()
 
@@ -119,7 +119,7 @@ func TestGroqClientAPIError(t *testing.T) {
 		resp := errorResponse{}
 		resp.Error.Message = "invalid api key"
 		resp.Error.Type = "invalid_request_error"
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer server.Close()
 
@@ -151,7 +151,7 @@ func TestGroqClientNoChoices(t *testing.T) {
 			}{},
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer server.Close()
 
@@ -202,14 +202,14 @@ func TestGroqClientValidateKeyInvalid(t *testing.T) {
 	}
 
 	err := client.ValidateKey(context.Background(), "bad-key")
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid API key")
 }
 
 func TestGroqClientDefaultModel(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var req chatCompletionRequest
-		json.NewDecoder(r.Body).Decode(&req)
+		_ = json.NewDecoder(r.Body).Decode(&req)
 
 		resp := chatCompletionResponse{
 			Model: req.Model,
@@ -224,7 +224,7 @@ func TestGroqClientDefaultModel(t *testing.T) {
 			},
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
+		_ = json.NewEncoder(w).Encode(resp)
 	}))
 	defer server.Close()
 
