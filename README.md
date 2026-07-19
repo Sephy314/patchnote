@@ -14,13 +14,13 @@ AI-powered Git assistant that generates commit messages, PR descriptions, and co
 ## Installation
 
 ```bash
-go install github.com/patchnote/patchnote@latest
+go install github.com/Sephy314/patchnote@latest
 ```
 
 Or build from source:
 
 ```bash
-git clone https://github.com/patchnote/patchnote.git
+git clone https://github.com/Sephy314/patchnote.git
 cd patchnote
 go build -o patchnote .
 ```
